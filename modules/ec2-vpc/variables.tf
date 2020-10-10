@@ -5,5 +5,5 @@ variable "prefix" {
 
 variable "instance_type" {
   type    = string
-  default = "t4g.micro"
+  default = "t3a.nano"
 }
