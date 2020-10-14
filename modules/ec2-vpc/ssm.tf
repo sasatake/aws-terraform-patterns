@@ -1,5 +1,5 @@
 resource "aws_ssm_association" "stop_instance" {
-  name                = data.aws_ssm_document.stop_instance
+  name                = data.aws_ssm_document.stop_instance.name
   instance_id         = aws_instance.web.id
   schedule_expression = "5 * *	*	*	*"
 }
