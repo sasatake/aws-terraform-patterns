@@ -8,7 +8,7 @@ resource "aws_ssm_association" "start_instance" {
   targets {
     key = "ParameterValues"
     values = [
-      "aws_instance.web.id"
+      aws_instance.web.id
     ]
   }
   automation_target_parameter_name = "InstanceId"
@@ -24,7 +24,7 @@ resource "aws_ssm_association" "stop_instance" {
   targets {
     key = "ParameterValues"
     values = [
-      "aws_instance.web.id"
+      aws_instance.web.id
     ]
   }
   automation_target_parameter_name = "InstanceId"
