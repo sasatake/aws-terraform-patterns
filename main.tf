@@ -7,8 +7,8 @@ provider "aws" {
   region  = var.main_region
 }
 
-module "ec2-vpc" {
-  source = "./modules/ec2-vpc/"
+module "ec2-ssm" {
+  source = "./modules/ec2-ssm/"
 
   prefix = var.resource_prefix
 }
