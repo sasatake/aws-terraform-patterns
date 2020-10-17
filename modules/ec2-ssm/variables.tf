@@ -11,7 +11,7 @@ variable "instance_type" {
 variable "schedule_expressions" {
   type = map(string)
   default = {
-    "start_instance" = "cron(5 7 * * ? *)",
-    "stop_instance"  = "cron(15 7 * * ? *)",
+    "start_instance" = "cron(15 23 * * ? *)",
+    "stop_instance"  = "cron(0 23 * * ? *)",
   }
 }
