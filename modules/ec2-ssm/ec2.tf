@@ -3,7 +3,7 @@ resource "aws_instance" "web" {
   instance_type = var.instance_type
 
   tags = {
-    Name            = "${var.prefix}-ec2-instance"
+    Name            = "${var.prefix}-ec2-web"
     ProvisionedBy   = "Terraform"
     ProvisionedFrom = "local"
   }
