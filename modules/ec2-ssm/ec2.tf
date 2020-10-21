@@ -1,6 +1,7 @@
 resource "aws_instance" "web" {
-  ami           = data.aws_ami.amazonlinux2.id
-  instance_type = var.instance_type
+  ami                  = data.aws_ami.amazonlinux2.id
+  instance_type        = var.instance_type
+  iam_instance_profile = aws_iam_instance_profile.ec2_web.id
 
   tags = {
     Name            = "${var.prefix}-ec2-web"
