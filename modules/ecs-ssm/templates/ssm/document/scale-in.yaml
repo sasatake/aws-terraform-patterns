@@ -1,0 +1,50 @@
+description: |-
+  # ECSサービスをスケールインする
+  * ECSサービスのタスクサイズを取得する
+  * SSMパラメータに取得したECSタスクサイズを保管する
+  * ECSサービスのタスクサイズを1にする
+schemaVersion: "0.3"
+mainSteps:
+  - name: get_ecs_task_size
+    action: "aws:executeAwsApi"
+    inputs:
+      Service: ecs
+      Api: DescribeServices
+      cluster: sasatake-test-ecscls-nginx
+      services:
+        - sasatake-test-ecssrv-nginx
+    outputs:
+      - Name: task_size
+        Selector: $.services[0].desiredCount
+        Type: Integer
+  - name: convert_ecs_task_size_type
+    action: "aws:executeScript"
+    inputs:
+      Runtime: "python3.7"
+      Handler: "script_handler"
+      InputPayload:
+        "value": "{{ get_ecs_task_size.task_size }}"
+      Script: |-
+        def script_handler(events, context):
+          return str(events['value'])
+    outputs:
+      - Name: task_size
+        Selector: $.Payload
+        Type: String
+  - name: put_ecs_task_size_parameter
+    action: "aws:executeAwsApi"
+    inputs:
+      Service: ssm
+      Api: PutParameter
+      Name: sasatake-test-param-ecssrv-nginx-task-size
+      Value: "{{ convert_ecs_task_size_type.task_size }}"
+      Overwrite: true
+  - name: change_ecs_task_size
+    action: "aws:executeAwsApi"
+    inputs:
+      Service: ecs
+      Api: UpdateService
+      desiredCount: 1
+      service: sasatake-test-ecssrv-nginx
+      cluster: sasatake-test-ecscls-nginx
+      forceNewDeployment: true

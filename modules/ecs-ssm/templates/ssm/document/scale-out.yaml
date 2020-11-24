@@ -1,0 +1,25 @@
+description: |-
+  # ECSサービスをスケールアウトする
+  * SSMパラメータから保管したECSタスクサイズを取得する。
+  * ECSサービスを更新する(取得したECSタスクサイズ数にする)
+schemaVersion: "0.3"
+mainSteps:
+  - name: get_ecs_task_size_parameter
+    action: "aws:executeAwsApi"
+    inputs:
+      Service: ssm
+      Api: GetParameter
+      Name: sasatake-test-param-ecssrv-nginx-task-size
+    outputs:
+      - Name: task_size
+        Selector: $.Parameter.Value
+        Type: Integer
+  - name: change_ecs_task_size
+    action: "aws:executeAwsApi"
+    inputs:
+      Service: ecs
+      Api: UpdateService
+      desiredCount: "{{ get_ecs_task_size_parameter.task_size }}"
+      service: sasatake-test-ecssrv-nginx
+      cluster: sasatake-test-ecscls-nginx
+      forceNewDeployment: true
