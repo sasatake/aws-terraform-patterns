@@ -7,13 +7,17 @@ description: |-
   * SSMパラメータの値を初期値（1）に更新する
   * 処理を終了する
 schemaVersion: "0.3"
+parameters:
+  EcsServiceTaskSizeParameter:
+    type: Integer
+    default: "{{ ssm:sasatake-test-param-ecssrv-nginx-task-size }}"
 mainSteps:
   - name: CheckEcsServiceTaskSize
     action: aws:branch
     inputs:
       Choices:
         - NextStep: UpdateEcsTaskSize
-          Variable: "{{ ssm:sasatake-test-param-ecssrv-nginx-task-size }}"
+          Variable: "{{ EcsServiceTaskSizeParameter }}"
           NumericGreater: 1
       Default: Finish
   - name: UpdateEcsTaskSize
@@ -21,7 +25,7 @@ mainSteps:
     inputs:
       Service: ecs
       Api: UpdateService
-      desiredCount: "{{ ssm:sasatake-test-param-ecssrv-nginx-task-size }}"
+      desiredCount: "{{ EcsServiceTaskSizeParameter }}"
       service: sasatake-test-ecssrv-nginx
       cluster: sasatake-test-ecscls-nginx
       forceNewDeployment: true
