@@ -9,15 +9,29 @@ description: |-
 schemaVersion: "0.3"
 parameters:
   EcsServiceTaskSizeParameter:
-    type: Integer
+    type: String
     default: "{{ ssm:sasatake-test-param-ecssrv-nginx-task-size }}"
 mainSteps:
+  - name: ConvertEcsServiceTaskSizeType
+    action: "aws:executeScript"
+    inputs:
+      Runtime: "python3.7"
+      Handler: "script_handler"
+      InputPayload:
+        "value": "{{ EcsServiceTaskSizeParameter }}"
+      Script: |-
+        def script_handler(events, context):
+          return int(events['value'])
+    outputs:
+      - Name: task_size
+        Selector: $.Payload
+        Type: Integer
   - name: CheckEcsServiceTaskSize
     action: aws:branch
     inputs:
       Choices:
         - NextStep: UpdateEcsTaskSize
-          Variable: "{{ EcsServiceTaskSizeParameter }}"
+          Variable: "{{ ConvertEcsServiceTaskSizeType.task_size }}"
           NumericGreater: 1
       Default: Finish
   - name: UpdateEcsTaskSize
@@ -25,7 +39,7 @@ mainSteps:
     inputs:
       Service: ecs
       Api: UpdateService
-      desiredCount: "{{ EcsServiceTaskSizeParameter }}"
+      desiredCount: "{{ ConvertEcsServiceTaskSizeType.task_size }}"
       service: sasatake-test-ecssrv-nginx
       cluster: sasatake-test-ecscls-nginx
       forceNewDeployment: true
