@@ -68,7 +68,7 @@ resource "aws_api_gateway_integration_response" "serverless_api_cors" {
 
 resource "aws_api_gateway_deployment" "serverless_api_dev" {
   depends_on = [
-    aws_api_gateway_integration.serverless_api,
+    aws_api_gateway_integration.serverless_api_lambda,
   ]
 
   rest_api_id = aws_api_gateway_rest_api.serverless_api.id
