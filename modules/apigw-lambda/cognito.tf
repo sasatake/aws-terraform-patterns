@@ -8,10 +8,15 @@ resource "aws_cognito_user_pool" "api_auth" {
   }
 
   schema {
-    attribute_data_type = "String"
-    name                = "email"
-    required            = true
-    mutable             = true
+    attribute_data_type      = "String"
+    developer_only_attribute = false
+    name                     = "email"
+    required                 = true
+    mutable                  = false
+    string_attribute_constraints {
+      min_length = 0
+      max_length = 128
+    }
   }
 
   username_configuration {
