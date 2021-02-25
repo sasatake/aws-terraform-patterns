@@ -32,7 +32,7 @@ resource "aws_api_gateway_method" "serverless_api_cors" {
   authorization = "NONE"
 }
 
-resource "aws_api_gateway_method_response" "opt" {
+resource "aws_api_gateway_method_response" "serverless_api_cors" {
   rest_api_id = aws_api_gateway_rest_api.serverless_api.id
   resource_id = aws_api_gateway_resource.serverless_api.id
   http_method = aws_api_gateway_method.serverless_api_cors.http_method
