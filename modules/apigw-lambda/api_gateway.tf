@@ -42,9 +42,6 @@ resource "aws_api_gateway_method_response" "serverless_api_cors" {
     "method.response.header.Access-Control-Allow-Methods" = true,
     "method.response.header.Access-Control-Allow-Headers" = true
   }
-  response_models = {
-    "application/json" = "Empty"
-  }
 }
 
 resource "aws_api_gateway_integration" "serverless_api_cors" {
@@ -52,6 +49,13 @@ resource "aws_api_gateway_integration" "serverless_api_cors" {
   resource_id = aws_api_gateway_resource.serverless_api.id
   http_method = aws_api_gateway_method.serverless_api_cors.http_method
   type        = "MOCK"
+  request_templates = {
+    "application/json" = <<EOF
+    {
+      "statusCode": 200
+    }
+    EOF
+  }
 }
 
 resource "aws_api_gateway_integration_response" "serverless_api_cors" {
@@ -61,7 +65,7 @@ resource "aws_api_gateway_integration_response" "serverless_api_cors" {
   status_code = 200
   response_parameters = {
     "method.response.header.Access-Control-Allow-Origin"  = "'*'",
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Requested-With'",
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
     "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST'"
   }
 }
