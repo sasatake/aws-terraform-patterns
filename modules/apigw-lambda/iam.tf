@@ -23,7 +23,7 @@ resource "aws_iam_policy" "invoke_api" {
   name = "${var.prefix.pascal}InvokeServerlessAPIPolicy"
   policy = templatefile(
     "${path.module}/templates/iam/cognito-identity/invoke_api_policy.json",
-    { api_arn = "${aws_api_gateway_deployment.serverless_api_dev.execution_arn}/*/*/*" }
+    { api_arn = aws_api_gateway_deployment.serverless_api_dev.execution_arn }
   )
 }
 
