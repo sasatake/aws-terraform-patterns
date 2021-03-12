@@ -39,6 +39,14 @@ resource "aws_cognito_user_pool_client" "app" {
   refresh_token_validity = 30
 }
 
+resource "aws_cognito_user_pool_client" "admin" {
+  name                   = "admin_client"
+  user_pool_id           = aws_cognito_user_pool.api_auth.id
+  refresh_token_validity = 30
+  explicit_auth_flows    = ["ALLOW_USER_PASSWORD_AUTH", "ALLOW_REFRESH_TOKEN_AUTH"]
+}
+
+
 resource "aws_cognito_identity_pool" "api_auth" {
   identity_pool_name               = "${var.prefix.snake}_cogip"
   allow_unauthenticated_identities = false
@@ -48,6 +56,13 @@ resource "aws_cognito_identity_pool" "api_auth" {
     provider_name           = aws_cognito_user_pool.api_auth.endpoint
     server_side_token_check = false
   }
+
+  cognito_identity_providers {
+    client_id               = aws_cognito_user_pool_client.admin.id
+    provider_name           = aws_cognito_user_pool.api_auth.endpoint
+    server_side_token_check = false
+  }
+
 }
 
 resource "aws_cognito_identity_pool_roles_attachment" "api_auth" {
