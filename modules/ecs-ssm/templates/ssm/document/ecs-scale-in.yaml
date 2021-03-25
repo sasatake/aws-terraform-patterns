@@ -8,15 +8,20 @@ description: |-
   * 取得したECSタスクサイズをSSMパラメータに保管する
   * 処理を終了する
 schemaVersion: "0.3"
+parameters:
+  ClusterName:
+    type: String
+  ServiceName:
+    type: String
 mainSteps:
   - name: GetCurrentEcsServiceTaskSize
-    action: "aws:executeAwsApi"
+    action: aws:executeAwsApi
     inputs:
       Service: ecs
       Api: DescribeServices
-      cluster: sasatake-test-ecscls-nginx
+      cluster: "{{ ClusterName }}"
       services:
-        - sasatake-test-ecssrv-nginx
+        - "{{ ServiceName }}"
     outputs:
       - Name: task_size
         Selector: $.services[0].desiredCount
@@ -30,21 +35,21 @@ mainSteps:
           NumericGreater: 1
       Default: Finish
   - name: UpdateEcsServiceTaskSize
-    action: "aws:executeAwsApi"
+    action: aws:executeAwsApi
     inputs:
       Service: ecs
       Api: UpdateService
       desiredCount: 1
-      service: sasatake-test-ecssrv-nginx
-      cluster: sasatake-test-ecscls-nginx
+      service: "{{ ServiceName }}"
+      cluster: "{{ ClusterName }}"
       forceNewDeployment: true
   - name: ConvertEcsServiceTaskSizeType
-    action: "aws:executeScript"
+    action: aws:executeScript
     inputs:
-      Runtime: "python3.7"
-      Handler: "script_handler"
+      Runtime: python3.7
+      Handler: script_handler
       InputPayload:
-        "value": "{{ GetCurrentEcsServiceTaskSize.task_size }}"
+        value: "{{ GetCurrentEcsServiceTaskSize.task_size }}"
       Script: |-
         def script_handler(events, context):
           return str(events['value'])
@@ -53,7 +58,7 @@ mainSteps:
         Selector: $.Payload
         Type: String
   - name: PutEcsServiceTaskSizeParameter
-    action: "aws:executeAwsApi"
+    action: aws:executeAwsApi
     inputs:
       Service: ssm
       Api: PutParameter

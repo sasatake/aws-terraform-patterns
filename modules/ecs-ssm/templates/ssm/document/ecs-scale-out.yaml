@@ -8,6 +8,10 @@ description: |-
   * 処理を終了する
 schemaVersion: "0.3"
 parameters:
+  ClusterName:
+    type: String
+  ServiceName:
+    type: String
   EcsServiceTaskSizeParameter:
     type: String
     default: "{{ ssm:sasatake-test-param-ecssrv-nginx-task-size }}"

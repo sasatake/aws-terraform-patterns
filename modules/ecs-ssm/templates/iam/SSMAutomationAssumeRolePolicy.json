@@ -6,8 +6,7 @@
       "Principal": {
         "Service": [ "events.amazonaws.com" ]
       },
-      "Effect": "Allow",
-      "Sid": ""
+      "Effect": "Allow"
     }
   ]
 }
