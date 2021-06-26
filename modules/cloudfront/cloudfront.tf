@@ -1,6 +1,8 @@
 resource "aws_cloudfront_distribution" "contents" {
   enabled = true
 
+  default_root_object = "index.html"
+
   origin {
     domain_name = aws_s3_bucket.contents.bucket_regional_domain_name
     origin_id   = aws_s3_bucket.contents.id
