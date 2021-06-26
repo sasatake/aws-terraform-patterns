@@ -16,6 +16,17 @@ resource "aws_s3_bucket_public_access_block" "contents" {
   restrict_public_buckets = true
 }
 
+resource "aws_s3_bucket_policy" "contents" {
+  bucket = aws_s3_bucket.contents.id
+
+  policy = templatefile("${path.module}/templates/s3/oai_access_policy.json.tpl",
+    {
+      oai_iam_arn = aws_cloudfront_origin_access_identity.contents.iam_arn,
+      bucket_name = aws_s3_bucket.contents.id
+    }
+  )
+}
+
 resource "aws_s3_bucket_object" "index_html" {
   bucket = aws_s3_bucket.contents.id
   key    = "index.html"
