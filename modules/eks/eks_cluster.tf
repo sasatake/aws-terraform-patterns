@@ -16,3 +16,13 @@ resource "aws_eks_cluster" "main" {
     aws_iam_role_policy_attachment.eks_pods_policy,
   ]
 }
+
+resource "aws_eks_fargate_profile" "main" {
+  cluster_name           = aws_eks_cluster.main.name
+  fargate_profile_name   = "${var.prefix}-cluster-node"
+  pod_execution_role_arn = aws_iam_role.eks_node.arn
+  subnet_ids             = [aws_subnet.private_subnet_01.id, aws_subnet.private_subnet_02.id]
+  selector {
+    namespace = "app"
+  }
+}
