@@ -17,12 +17,28 @@ resource "aws_eks_cluster" "main" {
   ]
 }
 
-resource "aws_eks_fargate_profile" "main" {
+resource "aws_eks_fargate_profile" "app" {
   cluster_name           = aws_eks_cluster.main.name
-  fargate_profile_name   = "${var.prefix}-cluster-node"
+  fargate_profile_name   = "${var.prefix}-cluster-node-app"
   pod_execution_role_arn = aws_iam_role.eks_node.arn
   subnet_ids             = [aws_subnet.private_subnet_01.id, aws_subnet.private_subnet_02.id]
+
   selector {
     namespace = "app"
+  }
+}
+
+resource "aws_eks_fargate_profile" "ope" {
+  cluster_name           = aws_eks_cluster.main.name
+  fargate_profile_name   = "${var.prefix}-cluster-node-ope"
+  pod_execution_role_arn = aws_iam_role.eks_node.arn
+  subnet_ids             = [aws_subnet.private_subnet_01.id, aws_subnet.private_subnet_02.id]
+  
+  selector {
+    namespace = "kube-system"
+  }
+
+  selector {
+    namespace = "kubernetes-dashboard"
   }
 }
