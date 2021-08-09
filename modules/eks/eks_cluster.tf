@@ -7,6 +7,8 @@ resource "aws_eks_cluster" "main" {
     security_group_ids = [aws_security_group.eks_cluster.id]
   }
 
+  version = "1.21"
+
   depends_on = [
     aws_subnet.private_subnet_01,
     aws_subnet.private_subnet_02,
@@ -33,7 +35,7 @@ resource "aws_eks_fargate_profile" "ope" {
   fargate_profile_name   = "${var.prefix}-cluster-node-ope"
   pod_execution_role_arn = aws_iam_role.eks_node.arn
   subnet_ids             = [aws_subnet.private_subnet_01.id, aws_subnet.private_subnet_02.id]
-  
+
   selector {
     namespace = "kube-system"
   }
