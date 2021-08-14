@@ -5,6 +5,5 @@ resource "aws_internet_gateway" "igw" {
     Name            = "${var.prefix}-igw"
     ProvisionedBy   = "Terraform"
     ProvisionedFrom = "local"
-    ProvisionedFor  = "eks"
   }
 }

@@ -22,13 +22,13 @@ resource "aws_iam_role_policy_attachment" "eks_cluster_policy" {
   role       = aws_iam_role.eks_cluster.name
 }
 
-resource "aws_iam_role_policy_attachment" "eks_pods_policy" {
+resource "aws_iam_role_policy_attachment" "eks_cluster_vpc_resource_policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController"
   role       = aws_iam_role.eks_cluster.name
 }
 
-resource "aws_iam_role" "eks_node" {
-  name = "${replace(title(var.prefix), "-", "")}EKSNodeRole"
+resource "aws_iam_role" "eks_pod" {
+  name = "${replace(title(var.prefix), "-", "")}EKSPodRole"
 
   assume_role_policy = <<POLICY
 {
@@ -48,6 +48,6 @@ POLICY
 
 resource "aws_iam_role_policy_attachment" "eks_node_policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEKSFargatePodExecutionRolePolicy"
-  role       = aws_iam_role.eks_cluster.name
+  role       = aws_iam_role.eks_pod.name
 }
 
