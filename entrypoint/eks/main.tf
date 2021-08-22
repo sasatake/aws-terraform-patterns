@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 module "vpc" {
-  source = "../../modules/vpc-eks/"
+  source = "../../modules/vpc/eks/"
 
   prefix = var.prefix
 }
