@@ -7,5 +7,9 @@ output "vpc_cidr_block" {
 }
 
 output "subnet_id_list" {
-  value = concat(aws_subnet.public[*].id)
+  value = aws_subnet.public[*].id
+}
+
+output "subnet_az_list" {
+  value = aws_subnet.public[*].availability_zone
 }
