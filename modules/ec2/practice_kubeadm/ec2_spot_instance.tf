@@ -1,3 +1,22 @@
+resource "tls_private_key" "master" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "tls_private_key" "worker" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "aws_key_pair" "master" {
+  public_key = tls_private_key.master.public_key_openssh
+}
+
+resource "aws_key_pair" "worker" {
+  public_key = tls_private_key.worker.public_key_openssh
+}
+
+
 resource "aws_spot_instance_request" "master" {
   ami                         = data.aws_ami.amazonlinux2.id
   instance_type               = var.instance_type
@@ -6,6 +25,7 @@ resource "aws_spot_instance_request" "master" {
   vpc_security_group_ids      = [aws_security_group.ec2.id]
   wait_for_fulfillment        = true
   associate_public_ip_address = true
+  key_name                    = aws_key_pair.master.id
 
   root_block_device {
     volume_size = 8
@@ -35,6 +55,7 @@ resource "aws_spot_instance_request" "worker" {
   vpc_security_group_ids      = [aws_security_group.ec2.id]
   wait_for_fulfillment        = true
   associate_public_ip_address = true
+  key_name                    = aws_key_pair.worker.id
 
   root_block_device {
     volume_size = 8

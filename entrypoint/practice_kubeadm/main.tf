@@ -19,3 +19,33 @@ module "ec2" {
     module.vpc
   ]
 }
+
+resource "local_file" "master_private_key" {
+  filename        = "${path.module}/master.id_rsa.pem"
+  content         = module.ec2.master_private_key
+  file_permission = "0600"
+}
+
+resource "local_file" "master_ssh_alias" {
+  filename = "${path.module}/ssh_alias.master.sh"
+  content = templatefile("${path.module}/templates/ssh_alias.sh.tpl", {
+    secret = local_file.master_private_key.filename
+    host   = module.ec2.master_id
+  })
+  file_permission = "0555"
+}
+
+resource "local_file" "worker_private_key" {
+  filename        = "${path.module}/worker.id_rsa.pem"
+  content         = module.ec2.worker_private_key
+  file_permission = "0600"
+}
+
+resource "local_file" "worker_ssh_alias" {
+  filename = "${path.module}/ssh_alias.worker.sh"
+  content = templatefile("${path.module}/templates/ssh_alias.sh.tpl", {
+    secret = local_file.worker_private_key.filename
+    host   = module.ec2.worker_id
+  })
+  file_permission = "0555"
+}

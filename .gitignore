@@ -1,2 +1,5 @@
 .terraform/
 terraform.tfstate*
+
+entrypoint/*/*.pem
+entrypoint/*/ssh_alias.*.sh
