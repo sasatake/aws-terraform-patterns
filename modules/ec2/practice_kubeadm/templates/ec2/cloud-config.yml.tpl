@@ -3,9 +3,6 @@
 timezone: Asia/Tokyo
 locale: ja_JP.utf8
 
-preserve_hostname: true
-hostname: ${hostname}
-
 package_update: true
 package_upgrade: true
 
