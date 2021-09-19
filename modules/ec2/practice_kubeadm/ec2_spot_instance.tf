@@ -22,7 +22,7 @@ resource "aws_spot_instance_request" "master" {
   instance_type               = var.instance_type
   iam_instance_profile        = aws_iam_instance_profile.ec2.id
   subnet_id                   = var.subnet_id
-  vpc_security_group_ids      = [aws_security_group.ec2.id]
+  vpc_security_group_ids      = [aws_security_group.k8s_node.id, aws_security_group.k8s_master_node.id]
   wait_for_fulfillment        = true
   associate_public_ip_address = true
   key_name                    = aws_key_pair.master.id
@@ -53,7 +53,7 @@ resource "aws_spot_instance_request" "worker" {
   instance_type               = var.instance_type
   iam_instance_profile        = aws_iam_instance_profile.ec2.id
   subnet_id                   = var.subnet_id
-  vpc_security_group_ids      = [aws_security_group.ec2.id]
+  vpc_security_group_ids      = [aws_security_group.k8s_node.id, aws_security_group.k8s_worker_node.id]
   wait_for_fulfillment        = true
   associate_public_ip_address = true
   key_name                    = aws_key_pair.worker.id

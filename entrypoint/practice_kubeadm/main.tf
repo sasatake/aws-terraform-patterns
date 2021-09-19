@@ -12,6 +12,7 @@ module "ec2" {
   prefix         = var.prefix
   instance_type  = "t3.small"
   vpc_id         = module.vpc.vpc_id
+  vpc_cidr_block = module.vpc.vpc_cidr_block
   subnet_id      = module.vpc.subnet_id_list[0]
   subnet_az_name = module.vpc.subnet_az_list[0]
 
