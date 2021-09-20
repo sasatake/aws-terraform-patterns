@@ -9,7 +9,7 @@ resource "aws_security_group" "k8s_node" {
       from_port        = 10250
       to_port          = 10250
       protocol         = "tcp"
-      cidr_blocks      = [var.vpc_cidr_block]
+      cidr_blocks      = []
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
       security_groups  = []
@@ -28,7 +28,19 @@ resource "aws_security_group" "k8s_node" {
       prefix_list_ids  = []
       security_groups  = []
       self             = false
+    },
+    {
+      description      = "Allow Kubelet Connections"
+      from_port        = 10250
+      to_port          = 10250
+      protocol         = "tcp"
+      cidr_blocks      = []
+      ipv6_cidr_blocks = []
+      prefix_list_ids  = []
+      security_groups  = []
+      self             = true
     }
+
   ]
 
   tags = {
@@ -52,7 +64,7 @@ resource "aws_security_group" "k8s_master_node" {
       cidr_blocks      = ["0.0.0.0/0"]
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
-      security_groups  = []
+      security_groups  = [aws_security_group.k8s_node.id]
       self             = false
     },
     {
@@ -60,21 +72,21 @@ resource "aws_security_group" "k8s_master_node" {
       from_port        = 2379
       to_port          = 2380
       protocol         = "tcp"
-      cidr_blocks      = [var.vpc_cidr_block]
+      cidr_blocks      = []
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
-      security_groups  = []
-      self             = false
+      security_groups  = [aws_security_group.k8s_node.id]
+      self             = true
     },
     {
       description      = "Allow Kube Scheduler Connections"
       from_port        = 10251
       to_port          = 10251
       protocol         = "tcp"
-      cidr_blocks      = [var.vpc_cidr_block]
+      cidr_blocks      = []
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
-      security_groups  = []
+      security_groups  = [aws_security_group.k8s_node.id]
       self             = true
     },
     {
@@ -82,10 +94,10 @@ resource "aws_security_group" "k8s_master_node" {
       from_port        = 10252
       to_port          = 10252
       protocol         = "tcp"
-      cidr_blocks      = [var.vpc_cidr_block]
+      cidr_blocks      = []
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
-      security_groups  = []
+      security_groups  = [aws_security_group.k8s_node.id]
       self             = true
     }
   ]
@@ -111,7 +123,21 @@ resource "aws_security_group" "k8s_worker_node" {
       cidr_blocks      = ["0.0.0.0/0"]
       ipv6_cidr_blocks = []
       prefix_list_ids  = []
-      security_groups  = []
+      security_groups  = [aws_security_group.k8s_node.id]
+      self             = false
+    }
+  ]
+
+  egress = [
+    {
+      description      = "Allow Kubernetes API server Connections"
+      from_port        = 6443
+      to_port          = 6443
+      protocol         = "tcp"
+      cidr_blocks      = []
+      ipv6_cidr_blocks = []
+      prefix_list_ids  = []
+      security_groups  = [aws_security_group.k8s_master_node.id]
       self             = false
     }
   ]
