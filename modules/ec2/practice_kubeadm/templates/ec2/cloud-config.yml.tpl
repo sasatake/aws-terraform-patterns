@@ -9,6 +9,7 @@ package_upgrade: true
 packages:
   - device-mapper-persistent-data
   - lvm2
+  - tc
 
 runcmd:
   - mkdir -p /etc/systemd/system/docker.service.d
