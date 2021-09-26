@@ -26,7 +26,9 @@ resource "aws_spot_instance_request" "master" {
   wait_for_fulfillment        = true
   associate_public_ip_address = true
   key_name                    = aws_key_pair.master.id
-  user_data                   = templatefile("${path.module}/templates/ec2/cloud-config.yml.tpl", {})
+  user_data = templatefile("${path.module}/templates/ec2/cloud-config.yml.tpl", {
+    node_type = "master"
+  })
 
   root_block_device {
     volume_size = 8
@@ -57,7 +59,9 @@ resource "aws_spot_instance_request" "worker" {
   wait_for_fulfillment        = true
   associate_public_ip_address = true
   key_name                    = aws_key_pair.worker.id
-  user_data                   = templatefile("${path.module}/templates/ec2/cloud-config.yml.tpl", {})
+  user_data = templatefile("${path.module}/templates/ec2/cloud-config.yml.tpl", {
+    node_type = "worker"
+  })
 
   root_block_device {
     volume_size = 8
