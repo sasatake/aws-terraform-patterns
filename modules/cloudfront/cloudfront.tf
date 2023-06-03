@@ -4,11 +4,9 @@ resource "aws_cloudfront_distribution" "contents" {
   default_root_object = "index.html"
 
   origin {
-    domain_name = aws_s3_bucket.contents.bucket_regional_domain_name
-    origin_id   = aws_s3_bucket.contents.id
-    s3_origin_config {
-      origin_access_identity = aws_cloudfront_origin_access_identity.contents.cloudfront_access_identity_path
-    }
+    domain_name              = aws_s3_bucket.contents.bucket_regional_domain_name
+    origin_id                = aws_s3_bucket.contents.id
+    origin_access_control_id = aws_cloudfront_origin_access_control.contents.id
   }
 
   default_cache_behavior {
@@ -68,6 +66,9 @@ resource "aws_cloudfront_distribution" "contents" {
 
 }
 
-resource "aws_cloudfront_origin_access_identity" "contents" {
-  comment = "For S3 Contents"
+resource "aws_cloudfront_origin_access_control" "contents" {
+  name                              = "${var.prefix}-cfoac-contents"
+  origin_access_control_origin_type = "s3"
+  signing_behavior                  = "always"
+  signing_protocol                  = "sigv4"
 }

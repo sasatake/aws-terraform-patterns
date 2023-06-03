@@ -28,10 +28,10 @@ resource "aws_s3_bucket_public_access_block" "contents" {
 resource "aws_s3_bucket_policy" "contents" {
   bucket = aws_s3_bucket.contents.id
 
-  policy = templatefile("${path.module}/templates/s3/oai_access_policy.json.tpl",
+  policy = templatefile("${path.module}/templates/s3/oac_access_policy.json.tpl",
     {
-      oai_iam_arn = aws_cloudfront_origin_access_identity.contents.iam_arn,
-      bucket_name = aws_s3_bucket.contents.id
+      bucket_name                 = aws_s3_bucket.contents.id
+      cloudfront_distribution_arn = aws_cloudfront_distribution.contents.arn,
     }
   )
 }
