@@ -1,9 +1,18 @@
 resource "aws_s3_bucket" "contents" {
   bucket = "${var.prefix}-s3-cloudfront-contents"
-  acl    = "private"
+}
 
-  versioning {
-    enabled = true
+resource "aws_s3_bucket_ownership_controls" "example" {
+  bucket = aws_s3_bucket.contents.id
+
+  rule {
+    object_ownership = "BucketOwnerPreferred"
+  }
+}
+resource "aws_s3_bucket_versioning" "contents" {
+  bucket = aws_s3_bucket.contents.id
+  versioning_configuration {
+    status = "Enabled"
   }
 }
 
@@ -27,20 +36,23 @@ resource "aws_s3_bucket_policy" "contents" {
   )
 }
 
-resource "aws_s3_bucket_object" "index_html" {
-  bucket = aws_s3_bucket.contents.id
-  key    = "index.html"
-  source = "${path.module}/resources/s3/index.html"
+resource "aws_s3_object" "index_html" {
+  bucket       = aws_s3_bucket.contents.id
+  key          = "index.html"
+  source       = "${path.module}/resources/s3/index.html"
+  content_type = "text/html"
 }
 
-resource "aws_s3_bucket_object" "error_html" {
-  bucket = aws_s3_bucket.contents.id
-  key    = "error/error.html"
-  source = "${path.module}/resources/s3/error/error.html"
+resource "aws_s3_object" "error_html" {
+  bucket       = aws_s3_bucket.contents.id
+  key          = "error/error.html"
+  source       = "${path.module}/resources/s3/error/error.html"
+  content_type = "text/html"
 }
 
-resource "aws_s3_bucket_object" "maintenance_html" {
-  bucket = aws_s3_bucket.contents.id
-  key    = "error/maintenance.html"
-  source = "${path.module}/resources/s3/error/maintenance.html"
+resource "aws_s3_object" "maintenance_html" {
+  bucket       = aws_s3_bucket.contents.id
+  key          = "error/maintenance.html"
+  source       = "${path.module}/resources/s3/error/maintenance.html"
+  content_type = "text/html"
 }
